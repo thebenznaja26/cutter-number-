@@ -30,7 +30,8 @@ body:before {
   background-size: 300px 150px;
   background-position: center bottom;
   clip-path: circle(150px at center center);
-  animation: flashlight 20s ease infinite;
+  /* เพิ่มเวลาจาก 20s เป็น 30s เพื่อให้ช้าลงและสมูทขึ้น */
+  animation: flashlight 30s ease-in-out infinite; 
 }
 
 body:after {
@@ -44,32 +45,60 @@ body:after {
   background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%);
   background-size: 10px 10px;
   background-position: left center, right center;
-  animation: eyes 20s infinite;
+  /* ปรับเวลาให้สัมพันธ์กับไฟฉาย */
+  animation: eyes 30s infinite;
 }
 
+/* แอนิเมชันไฟฉายแบบใหม่: ช้าลง, ย่อขยายวงไฟ, มีกระพริบ */
 @keyframes flashlight {
-  0% { clip-path: circle(150px at -25% 10%); }
-  38% { clip-path: circle(150px at 60% 20%); }
-  39% { opacity: 1; clip-path: circle(150px at 60% 86%); }
-  40% { opacity: 0; clip-path: circle(150px at 60% 86%); }
-  41% { opacity: 1; clip-path: circle(150px at 60% 86%); }
-  42% { opacity: 0; clip-path: circle(150px at 60% 86%); }
-  54% { opacity: 0; clip-path: circle(150px at 60% 86%); }
-  55% { opacity: 1; clip-path: circle(150px at 60% 86%); }
-  59% { opacity: 1; clip-path: circle(150px at 60% 86%); }
-  64% { clip-path: circle(150px at 45% 78%); }
-  68% { clip-path: circle(150px at 85% 89%); }
-  72% { clip-path: circle(150px at 60% 86%); }
-  74% { clip-path: circle(150px at 60% 86%); }
-  100% { clip-path: circle(150px at 150% 50%); }
+  /* เลื่อนช้าๆ ส่องใกล้(เล็ก) ส่องไกล(ใหญ่) */
+  0%   { clip-path: circle(150px at -10% -10%); opacity: 1; }
+  10%  { clip-path: circle(180px at 20% 30%); opacity: 1; }
+  20%  { clip-path: circle(120px at 70% 10%); opacity: 1; }
+  30%  { clip-path: circle(160px at 80% 60%); opacity: 1; }
+  35%  { clip-path: circle(150px at 30% 80%); opacity: 1; }
+  
+  /* เข้ามาหยุดส่องเจอตาที่ 40% และมีลูกเล่นไฟกระพริบ (หลอดไฟหลวม) */
+  40%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+  40.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } /* กระพริบ 1 */
+  41%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+  41.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } /* กระพริบ 2 */
+  42%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+  46%  { clip-path: circle(150px at 60% 86%); opacity: 1; } /* รอตาแดงหาย */
+  
+  /* เลื่อนไฟฉายหนีด้วยความตกใจ (ขยายรัศมีนิดนึง) */
+  47%  { clip-path: circle(180px at 60% 86%); opacity: 1; }
+  52%  { clip-path: circle(130px at 20% 50%); opacity: 1; }
+  58%  { clip-path: circle(160px at 80% 40%); opacity: 1; }
+  64%  { clip-path: circle(150px at 50% 50%); opacity: 1; } /* มากลางจอ */
+  
+  /* ลูกเล่นกระพริบเหมือนหลอดไฟนีออนพัง ก่อนสว่างทั้งจอ */
+  64.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+  65%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
+  65.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+  66%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
+  66.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+  
+  /* ระเบิดความสว่างครอบคลุมทั้งจอ */
+  67%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } 
+  82%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } /* ค้างความสว่างไว้นานขึ้น */
+  
+  /* ดับฟุบกลับเป็นไฟฉาย */
+  83%  { clip-path: circle(150px at 50% 50%); opacity: 1; } 
+  88%  { clip-path: circle(180px at 15% 15%); opacity: 1; }
+  94%  { clip-path: circle(120px at 85% 85%); opacity: 1; }
+  100% { clip-path: circle(150px at 150% 150%); opacity: 1; }
 }
 
+/* แอนิเมชันของดวงตา (ปรับจังหวะให้ตรงกับไฟฉาย) */
 @keyframes eyes {
-  0%, 38% { opacity: 0; }
-  39%, 41% { opacity: 1; transform: scaleY(1); }
-  40% { transform: scaleY(0); filter: none; background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); }
-  41% { transform: scaleY(1); background-image: radial-gradient(circle, #ff0000 50%, transparent 50%), radial-gradient(circle, #ff0000 50%, transparent 50%); filter: drop-shadow(0 0 4px #ff8686); }
-  42%, 100% { opacity: 0; }
+  0%, 39% { opacity: 0; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
+  40%   { opacity: 1; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
+  41.5% { transform: scaleY(1); } /* ตาขาวจ้องมอง */
+  42%   { transform: scaleY(0); } /* หลับตากระพริบ 1 ที */
+  42.5% { transform: scaleY(1); background-image: radial-gradient(circle, #ff0000 50%, transparent 50%), radial-gradient(circle, #ff0000 50%, transparent 50%); filter: drop-shadow(0 0 10px #ff0000); } /* ตาแดงเรืองแสง */
+  45%   { opacity: 1; }
+  46%, 100% { opacity: 0; }
 }
 
 /* --- END: โค้ดที่คุณให้มา --- */
