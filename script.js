@@ -1,47 +1,95 @@
-let cutterData = {};
-let sortedKeys = [];
-
-// โหลดข้อมูล JSON เมื่อเปิดหน้าเว็บ
-async function loadData() {
-    try {
-        const response = await fetch('cutter_data.json');
-        cutterData = await response.json();
-        // จัดเรียง Key ตามลำดับพจนานุกรมไทย
-        sortedKeys = Object.keys(cutterData).sort((a, b) => a.localeCompare(b, 'th'));
-    } catch (error) {
-        console.error("ไม่สามารถโหลดข้อมูลได้", error);
-        document.getElementById('result').innerText = "ข้อผิดพลาด: โหลดข้อมูลไม่สำเร็จ";
-    }
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --bg-color: #f8f9fa;
+    --text-color: #333;
 }
 
-// ฟังก์ชันค้นหาและเทียบตาราง
-function findCutterNumber(input) {
-    if (!input) return "- รอการค้นหา -";
-    
-    // อัลกอริทึมค้นหาคำที่ใกล้เคียงที่สุด (Binary Search แบบประยุกต์)
-    let bestMatch = "";
-    for (let i = 0; i < sortedKeys.length; i++) {
-        // ถ้าคีย์ในตารางน้อยกว่าหรือเท่ากับคำค้นหา ให้จำค่าไว้
-        if (sortedKeys[i].localeCompare(input, 'th') <= 0) {
-            bestMatch = sortedKeys[i];
-        } else {
-            // ถ้าคีย์ในตารางเริ่มมากกว่าคำค้นหา ให้หยุดและใช้ค่าล่าสุด
-            break; 
-        }
-    }
-
-    if (bestMatch !== "") {
-        return cutterData[bestMatch];
-    }
-    return "ไม่พบข้อมูล";
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-// ผูกอีเวนต์กับช่องพิมพ์
-document.getElementById('authorInput').addEventListener('input', function(e) {
-    const inputText = e.target.value.trim();
-    const resultText = findCutterNumber(inputText);
-    document.getElementById('result').innerText = resultText;
-});
+.container {
+    max-width: 600px;
+    width: 100%;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
 
-// เรียกใช้งานตอนโหลดเว็บ
-loadData();
+header {
+    text-align: center;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+header h1 {
+    color: var(--primary-color);
+    margin: 0 0 10px 0;
+    font-size: 24px;
+}
+
+.search-box {
+    margin-bottom: 25px;
+}
+
+.search-box label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    transition: border-color 0.3s;
+}
+
+.search-box input:focus {
+    border-color: var(--secondary-color);
+    outline: none;
+}
+
+.result-box {
+    text-align: center;
+    background: #eaf2f8;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.result-display {
+    font-size: 36px;
+    font-weight: bold;
+    color: var(--secondary-color);
+    margin-top: 10px;
+}
+
+.guide {
+    font-size: 14px;
+    color: #666;
+    background: #fff3cd;
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid #ffc107;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 12px;
+    color: #999;
+}
