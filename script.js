@@ -1,95 +1,83 @@
-:root {
-    --primary-color: #2c3e50;
-    --secondary-color: #3498db;
-    --bg-color: #f8f9fa;
-    --text-color: #333;
-}
+document.addEventListener('DOMContentLoaded', () => {
+    const authorInput = document.getElementById('authorInput');
+    const resultDisplay = document.getElementById('result');
 
-body {
-    font-family: 'Sarabun', sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-}
+    let cutterData = {};
+    const initialMessage = '- รอการค้นหา -';
+    const notFoundMessage = 'ไม่พบข้อมูล';
+    const errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
 
-.container {
-    max-width: 600px;
-    width: 100%;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
+    // 1. ฟังก์ชันสำหรับโหลดข้อมูลจากไฟล์ JSON
+    async function loadCutterData() {
+        try {
+            const response = await fetch('cutter_data.json');
+            if (!response.ok) {
+                // หากไม่สามารถโหลดไฟล์ได้ (เช่น 404 Not Found)
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            cutterData = await response.json();
+            // เมื่อโหลดข้อมูลสำเร็จ, สามารถเริ่มค้นหาได้
+            authorInput.disabled = false;
+            authorInput.placeholder = "เช่น นิภา, มงคล, สุชาติ...";
+        } catch (error) {
+            console.error("Could not load cutter data:", error);
+            // แสดงข้อความผิดพลาดบนหน้าจอ
+            resultDisplay.textContent = errorMessage;
+            resultDisplay.style.color = '#e74c3c'; // สีแดง
+            // ปิดการใช้งาน input field หากโหลดข้อมูลไม่ได้
+            authorInput.disabled = true;
+            authorInput.placeholder = "ไม่สามารถโหลดฐานข้อมูลได้";
+        }
+    }
 
-header {
-    text-align: center;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-}
+    // 2. ฟังก์ชันสำหรับค้นหาเลขคัตเตอร์
+    function findCutterNumber(query) {
+        // ถ้าไม่มีการพิมพ์ (ค่าว่าง) ให้กลับไปเป็นสถานะเริ่มต้น
+        if (!query) {
+            return initialMessage;
+        }
 
-header h1 {
-    color: var(--primary-color);
-    margin: 0 0 10px 0;
-    font-size: 24px;
-}
+        // ตัดช่องว่างที่ไม่จำเป็นออกจากคำค้นหา
+        const normalizedQuery = query.trim();
 
-.search-box {
-    margin-bottom: 25px;
-}
+        // วนลูปเพื่อค้นหาในข้อมูลที่โหลดมา
+        for (const key in cutterData) {
+            // บาง key อาจมีหลายชื่อ คั่นด้วย comma เช่น "นิมิต, นิมิตร"
+            // เราจะแยกชื่อเหล่านั้นออกมาเป็น array
+            const names = key.split(',').map(name => name.trim());
 
-.search-box label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 8px;
-}
+            // ตรวจสอบว่ามีชื่อใดใน array ที่ "ขึ้นต้นด้วย" คำค้นหาหรือไม่
+            // ทำให้การค้นหาแบบ "นิภา" สามารถเจอ "นิภาวรรณ" ได้
+            const isMatch = names.some(name => name.startsWith(normalizedQuery));
 
-.search-box input {
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    box-sizing: border-box;
-    font-family: 'Sarabun', sans-serif;
-    transition: border-color 0.3s;
-}
+            if (isMatch) {
+                // ถ้าเจอ ให้คืนค่าเลขคัตเตอร์ทันที
+                return cutterData[key];
+            }
+        }
 
-.search-box input:focus {
-    border-color: var(--secondary-color);
-    outline: none;
-}
+        // ถ้าวนลูปจนจบแล้วไม่เจอ ให้คืนค่าว่า "ไม่พบข้อมูล"
+        return notFoundMessage;
+    }
 
-.result-box {
-    text-align: center;
-    background: #eaf2f8;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
+    // 3. เพิ่ม Event Listener ให้กับช่องค้นหา
+    authorInput.addEventListener('input', () => {
+        const query = authorInput.value;
+        const result = findCutterNumber(query);
 
-.result-display {
-    font-size: 36px;
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin-top: 10px;
-}
+        // อัปเดตข้อความที่แสดงผล
+        resultDisplay.textContent = result;
 
-.guide {
-    font-size: 14px;
-    color: #666;
-    background: #fff3cd;
-    padding: 15px;
-    border-radius: 8px;
-    border-left: 4px solid #ffc107;
-}
+        // เปลี่ยนสีข้อความตามสถานะเพื่อประสบการณ์ใช้งานที่ดีขึ้น
+        if (result === notFoundMessage) {
+            resultDisplay.style.color = '#e74c3c'; // สีแดงสำหรับ "ไม่พบ"
+        } else if (result === initialMessage) {
+            resultDisplay.style.color = '#333'; // สีเทาสำหรับสถานะเริ่มต้น
+        } else {
+            resultDisplay.style.color = 'var(--secondary-color)'; // สีหลักสำหรับผลลัพธ์ที่ถูกต้อง
+        }
+    });
 
-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 12px;
-    color: #999;
-}
+    // 4. เริ่มโหลดข้อมูลทันทีเมื่อหน้าเว็บพร้อมใช้งาน
+    loadCutterData();
+});
