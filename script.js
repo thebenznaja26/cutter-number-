@@ -2,82 +2,91 @@ document.addEventListener('DOMContentLoaded', () => {
     const authorInput = document.getElementById('authorInput');
     const resultDisplay = document.getElementById('result');
 
-    let cutterData = {};
+    let sortedCutterList = []; // เปลี่ยนมาใช้ Array ที่เรียงลำดับแล้ว
     const initialMessage = '- รอการค้นหา -';
     const notFoundMessage = 'ไม่พบข้อมูล';
     const errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
 
-    // 1. ฟังก์ชันสำหรับโหลดข้อมูลจากไฟล์ JSON
-    async function loadCutterData() {
+    // 1. ฟังก์ชันสำหรับโหลดและเตรียมข้อมูล
+    async function setupCutterData() {
         try {
+            // ปิดการใช้งาน input ชั่วคราวจนกว่าข้อมูลจะพร้อม
+            authorInput.disabled = true;
+            authorInput.placeholder = "กำลังโหลดฐานข้อมูล...";
+
             const response = await fetch('cutter_data.json');
             if (!response.ok) {
-                // หากไม่สามารถโหลดไฟล์ได้ (เช่น 404 Not Found)
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            cutterData = await response.json();
-            // เมื่อโหลดข้อมูลสำเร็จ, สามารถเริ่มค้นหาได้
+            const cutterData = await response.json();
+
+            // แปลง Object เป็น Array และเรียงลำดับตามตัวอักษรของ key
+            sortedCutterList = Object.entries(cutterData).sort((a, b) => {
+                // ใช้ key (ชื่อ) ในการเปรียบเทียบและเรียงลำดับ
+                // เราใช้ชื่อแรกในกรณีที่มีหลายชื่อ เช่น "นิมิต, นิมิตร"
+                const keyA = a[0].split(',')[0].trim();
+                const keyB = b[0].split(',')[0].trim();
+                return keyA.localeCompare(keyB, 'th'); // เรียงลำดับตามหลักภาษาไทย
+            });
+            
+            // เมื่อโหลดข้อมูลสำเร็จ, เปิดให้ใช้งาน
             authorInput.disabled = false;
             authorInput.placeholder = "เช่น นิภา, มงคล, สุชาติ...";
+            console.log('Cutter data loaded and sorted successfully.');
+
         } catch (error) {
             console.error("Could not load cutter data:", error);
-            // แสดงข้อความผิดพลาดบนหน้าจอ
             resultDisplay.textContent = errorMessage;
             resultDisplay.style.color = '#e74c3c'; // สีแดง
-            // ปิดการใช้งาน input field หากโหลดข้อมูลไม่ได้
-            authorInput.disabled = true;
             authorInput.placeholder = "ไม่สามารถโหลดฐานข้อมูลได้";
         }
     }
 
-    // 2. ฟังก์ชันสำหรับค้นหาเลขคัตเตอร์
+    // 2. ฟังก์ชันสำหรับค้นหาเลขคัตเตอร์ (ปรับปรุงใหม่ทั้งหมด)
     function findCutterNumber(query) {
-        // ถ้าไม่มีการพิมพ์ (ค่าว่าง) ให้กลับไปเป็นสถานะเริ่มต้น
         if (!query) {
-            return initialMessage;
+            return { result: initialMessage, color: '#333' };
         }
 
-        // ตัดช่องว่างที่ไม่จำเป็นออกจากคำค้นหา
         const normalizedQuery = query.trim();
+        let bestMatch = null;
 
-        // วนลูปเพื่อค้นหาในข้อมูลที่โหลดมา
-        for (const key in cutterData) {
-            // บาง key อาจมีหลายชื่อ คั่นด้วย comma เช่น "นิมิต, นิมิตร"
-            // เราจะแยกชื่อเหล่านั้นออกมาเป็น array
-            const names = key.split(',').map(name => name.trim());
-
-            // ตรวจสอบว่ามีชื่อใดใน array ที่ "ขึ้นต้นด้วย" คำค้นหาหรือไม่
-            // ทำให้การค้นหาแบบ "นิภา" สามารถเจอ "นิภาวรรณ" ได้
-            const isMatch = names.some(name => name.startsWith(normalizedQuery));
-
-            if (isMatch) {
-                // ถ้าเจอ ให้คืนค่าเลขคัตเตอร์ทันที
-                return cutterData[key];
+        // วนลูปในรายการที่เรียงลำดับไว้แล้ว
+        for (const [key, cutterNumber] of sortedCutterList) {
+            // เราใช้ชื่อแรกในการเปรียบเทียบ
+            const primaryName = key.split(',')[0].trim();
+            
+            // ถ้าคำที่ค้นหา มีค่ามากกว่าหรือเท่ากับชื่อในตาราง (ตามลำดับตัวอักษร)
+            // แสดงว่าเลขคัตเตอร์นี้ยังเป็นตัวเลือกที่เป็นไปได้
+            if (normalizedQuery.localeCompare(primaryName, 'th') >= 0) {
+                bestMatch = cutterNumber;
+            } else {
+                // ถ้าคำที่ค้นหามีค่าน้อยกว่าชื่อในตาราง
+                // แสดงว่าเราค้นหาเลยจุดที่ถูกต้องมาแล้ว
+                // ให้หยุดค้นหาทันที เพราะรายการถูกเรียงลำดับไว้แล้ว
+                break;
             }
         }
-
-        // ถ้าวนลูปจนจบแล้วไม่เจอ ให้คืนค่าว่า "ไม่พบข้อมูล"
-        return notFoundMessage;
+        
+        if (bestMatch) {
+            // พบผลลัพธ์ที่ใกล้เคียงที่สุด
+            return { result: bestMatch, color: 'var(--secondary-color)' };
+        } else {
+            // ถ้าวนจนจบแล้วยังไม่เจอ (เช่น พิมพ์ "ก" แต่ข้อมูลเริ่มที่ "น")
+            return { result: notFoundMessage, color: '#e74c3c' };
+        }
     }
 
     // 3. เพิ่ม Event Listener ให้กับช่องค้นหา
     authorInput.addEventListener('input', () => {
         const query = authorInput.value;
-        const result = findCutterNumber(query);
-
-        // อัปเดตข้อความที่แสดงผล
-        resultDisplay.textContent = result;
-
-        // เปลี่ยนสีข้อความตามสถานะเพื่อประสบการณ์ใช้งานที่ดีขึ้น
-        if (result === notFoundMessage) {
-            resultDisplay.style.color = '#e74c3c'; // สีแดงสำหรับ "ไม่พบ"
-        } else if (result === initialMessage) {
-            resultDisplay.style.color = '#333'; // สีเทาสำหรับสถานะเริ่มต้น
-        } else {
-            resultDisplay.style.color = 'var(--secondary-color)'; // สีหลักสำหรับผลลัพธ์ที่ถูกต้อง
-        }
+        const searchResult = findCutterNumber(query);
+        
+        // อัปเดตผลลัพธ์และสี
+        resultDisplay.textContent = searchResult.result;
+        resultDisplay.style.color = searchResult.color;
     });
 
-    // 4. เริ่มโหลดข้อมูลทันทีเมื่อหน้าเว็บพร้อมใช้งาน
-    loadCutterData();
+    // 4. เริ่มโหลดและเตรียมข้อมูลทันที
+    setupCutterData();
 });
