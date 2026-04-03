@@ -1,111 +1,3 @@
-/* --- START: โค้ดที่คุณให้มา (ปรับจาก .container เป็น body) --- */
-/* From Uiverse.io by Cobp */
-body {
-  --color-0: #fff;
-  --color-1: #111;
-  --color-2: #222;
-  --color-3: #333;
-  --color-4: #2e2e2e;
-  --color-5: #d2b48c;
-  --color-6: #b22222;
-  --color-7: #871a1a;
-  --color-8: #ff6347;
-  --color-9: #ff3814;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-1);
-  background-image: linear-gradient( to top, var(--color-2) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 80%), linear-gradient(to right, var(--color-2), var(--color-4) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-2) 6%, var(--color-4) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, var(--color-2) 27%, var(--color-4) 34%, transparent 34% ), linear-gradient( to right, transparent 51%, var(--color-2) 51%, var(--color-4) 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, var(--color-2) 42%, var(--color-4) 44%, transparent 44% ), linear-gradient( to right, transparent 45%, var(--color-2) 45%, var(--color-4) 47%, transparent 47% ), linear-gradient( to right, transparent 48%, var(--color-2) 48%, var(--color-4) 50%, transparent 50% ), linear-gradient( to right, transparent 87%, var(--color-2) 87%, var(--color-4) 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, var(--color-2) 14%, var(--color-4) 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, var(--color-2) 10%, var(--color-4) 13%, transparent 13% ), linear-gradient( to right, transparent 21%, var(--color-2) 21%, #1a1a1a 25%, transparent 25% ), linear-gradient( to right, transparent 58%, var(--color-2) 58%, var(--color-4) 64%, transparent 64% ), linear-gradient( to right, transparent 92%, var(--color-2) 92%, var(--color-4) 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, var(--color-2) 96%, #1a1a1a 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, var(--color-2) 35%, var(--color-4) 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, var(--color-3) 78%, var(--color-3) 80%, transparent 80%, transparent 82%, var(--color-3) 82%, var(--color-3) 83%, transparent 83% ), linear-gradient( to right, transparent 66%, var(--color-2) 66%, var(--color-4) 85%, transparent 85% );
-  background-size: 300px 150px;
-  background-position: center bottom;
-}
-
-body:before {
-  content: "";
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  inset: 0;
-  background-color: var(--color-1);
-  background-image: linear-gradient( to top, var(--color-5) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 30%), linear-gradient(to right, var(--color-6), var(--color-7) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-8) 6%, var(--color-9) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, #556b2f 27%, #39481f 34%, transparent 34% ), linear-gradient( to right, transparent 51%, #fa8072 51%, #f85441 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, #008080 42%, #004d4d 44%, transparent 44% ), linear-gradient( to right, transparent 45%, #008080 45%, #004d4d 47%, transparent 47% ), linear-gradient( to right, transparent 48%, #008080 48%, #004d4d 50%, transparent 50% ), linear-gradient( to right, transparent 87%, #789 87%, #4f5d6a 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, #bdb76b 14%, #989244 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, #808000 10%, #4d4d00 13%, transparent 13% ), linear-gradient( to right, transparent 21%, #8b4513 21%, #5e2f0d 25%, transparent 25% ), linear-gradient( to right, transparent 58%, #8b4513 58%, #5e2f0d 64%, transparent 64% ), linear-gradient( to right, transparent 92%, #2f4f4f 92%, #1c2f2f 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, #2f4f4f 96%, #1c2f2f 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, #cd5c5c 35%, #bc3a3a 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, #bc8f8f 78%, #bc8f8f 80%, transparent 80%, transparent 82%, #bc8f8f 82%, #bc8f8f 83%, transparent 83% ), linear-gradient( to right, transparent 66%, #a52a2a 66%, #7c2020 85%, transparent 85% );
-  background-size: 300px 150px;
-  background-position: center bottom;
-  clip-path: circle(150px at center center);
-  /* เพิ่มเวลาจาก 20s เป็น 30s เพื่อให้ช้าลงและสมูทขึ้น */
-  animation: flashlight 30s ease-in-out infinite; 
-}
-
-body:after {
-  content: "";
-  width: 25px;
-  height: 10px;
-  position: absolute;
-  left: calc(50% + 59px);
-  bottom: 100px;
-  background-repeat: no-repeat;
-  background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%);
-  background-size: 10px 10px;
-  background-position: left center, right center;
-  /* ปรับเวลาให้สัมพันธ์กับไฟฉาย */
-  animation: eyes 30s infinite;
-}
-
-/* แอนิเมชันไฟฉายแบบใหม่: ช้าลง, ย่อขยายวงไฟ, มีกระพริบ */
-@keyframes flashlight {
-  /* เลื่อนช้าๆ ส่องใกล้(เล็ก) ส่องไกล(ใหญ่) */
-  0%   { clip-path: circle(150px at -10% -10%); opacity: 1; }
-  10%  { clip-path: circle(180px at 20% 30%); opacity: 1; }
-  20%  { clip-path: circle(120px at 70% 10%); opacity: 1; }
-  30%  { clip-path: circle(160px at 80% 60%); opacity: 1; }
-  35%  { clip-path: circle(150px at 30% 80%); opacity: 1; }
-  
-  /* เข้ามาหยุดส่องเจอตาที่ 40% และมีลูกเล่นไฟกระพริบ (หลอดไฟหลวม) */
-  40%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
-  40.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } /* กระพริบ 1 */
-  41%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
-  41.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } /* กระพริบ 2 */
-  42%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
-  46%  { clip-path: circle(150px at 60% 86%); opacity: 1; } /* รอตาแดงหาย */
-  
-  /* เลื่อนไฟฉายหนีด้วยความตกใจ (ขยายรัศมีนิดนึง) */
-  47%  { clip-path: circle(180px at 60% 86%); opacity: 1; }
-  52%  { clip-path: circle(130px at 20% 50%); opacity: 1; }
-  58%  { clip-path: circle(160px at 80% 40%); opacity: 1; }
-  64%  { clip-path: circle(150px at 50% 50%); opacity: 1; } /* มากลางจอ */
-  
-  /* ลูกเล่นกระพริบเหมือนหลอดไฟนีออนพัง ก่อนสว่างทั้งจอ */
-  64.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
-  65%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
-  65.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
-  66%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
-  66.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
-  
-  /* ระเบิดความสว่างครอบคลุมทั้งจอ */
-  67%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } 
-  82%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } /* ค้างความสว่างไว้นานขึ้น */
-  
-  /* ดับฟุบกลับเป็นไฟฉาย */
-  83%  { clip-path: circle(150px at 50% 50%); opacity: 1; } 
-  88%  { clip-path: circle(180px at 15% 15%); opacity: 1; }
-  94%  { clip-path: circle(120px at 85% 85%); opacity: 1; }
-  100% { clip-path: circle(150px at 150% 150%); opacity: 1; }
-}
-
-/* แอนิเมชันของดวงตา (ปรับจังหวะให้ตรงกับไฟฉาย) */
-@keyframes eyes {
-  0%, 39% { opacity: 0; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
-  40%   { opacity: 1; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
-  41.5% { transform: scaleY(1); } /* ตาขาวจ้องมอง */
-  42%   { transform: scaleY(0); } /* หลับตากระพริบ 1 ที */
-  42.5% { transform: scaleY(1); background-image: radial-gradient(circle, #ff0000 50%, transparent 50%), radial-gradient(circle, #ff0000 50%, transparent 50%); filter: drop-shadow(0 0 10px #ff0000); } /* ตาแดงเรืองแสง */
-  45%   { opacity: 1; }
-  46%, 100% { opacity: 0; }
-}
-
-/* --- END: โค้ดที่คุณให้มา --- */
-
-
-/* --- START: โค้ดดีไซน์ใหม่ที่ผมเพิ่มให้ (ปรับเป็นธีมสีน้ำเงิน) --- */
-
 /* Global Styles */
 * {
     box-sizing: border-box;
@@ -126,22 +18,103 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100%;
-    overflow: hidden; /* ป้องกัน scrollbar จาก animation */
-    position: relative; /* จำเป็นสำหรับ :before, :after */
+    overflow: hidden; 
+    position: relative; 
+    --color-0: #fff;
+    --color-1: #111;
+    --color-2: #222;
+    --color-3: #333;
+    --color-4: #2e2e2e;
+    --color-5: #d2b48c;
+    --color-6: #b22222;
+    --color-7: #871a1a;
+    --color-8: #ff6347;
+    --color-9: #ff3814;
+    background-color: var(--color-1);
+    background-image: linear-gradient( to top, var(--color-2) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 80%), linear-gradient(to right, var(--color-2), var(--color-4) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-2) 6%, var(--color-4) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, var(--color-2) 27%, var(--color-4) 34%, transparent 34% ), linear-gradient( to right, transparent 51%, var(--color-2) 51%, var(--color-4) 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, var(--color-2) 42%, var(--color-4) 44%, transparent 44% ), linear-gradient( to right, transparent 45%, var(--color-2) 45%, var(--color-4) 47%, transparent 47% ), linear-gradient( to right, transparent 48%, var(--color-2) 48%, var(--color-4) 50%, transparent 50% ), linear-gradient( to right, transparent 87%, var(--color-2) 87%, var(--color-4) 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, var(--color-2) 14%, var(--color-4) 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, var(--color-2) 10%, var(--color-4) 13%, transparent 13% ), linear-gradient( to right, transparent 21%, var(--color-2) 21%, #1a1a1a 25%, transparent 25% ), linear-gradient( to right, transparent 58%, var(--color-2) 58%, var(--color-4) 64%, transparent 64% ), linear-gradient( to right, transparent 92%, var(--color-2) 92%, var(--color-4) 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, var(--color-2) 96%, #1a1a1a 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, var(--color-2) 35%, var(--color-4) 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, var(--color-3) 78%, var(--color-3) 80%, transparent 80%, transparent 82%, var(--color-3) 82%, var(--color-3) 83%, transparent 83% ), linear-gradient( to right, transparent 66%, var(--color-2) 66%, var(--color-4) 85%, transparent 85% );
+    background-size: 300px 150px;
+    background-position: center bottom;
 }
 
-/* Main Application Container (Glassmorphism) */
+body:before {
+    content: "";
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    background-color: var(--color-1);
+    background-image: linear-gradient( to top, var(--color-5) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 30%), linear-gradient(to right, var(--color-6), var(--color-7) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-8) 6%, var(--color-9) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, #556b2f 27%, #39481f 34%, transparent 34% ), linear-gradient( to right, transparent 51%, #fa8072 51%, #f85441 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, #008080 42%, #004d4d 44%, transparent 44% ), linear-gradient( to right, transparent 45%, #008080 45%, #004d4d 47%, transparent 47% ), linear-gradient( to right, transparent 48%, #008080 48%, #004d4d 50%, transparent 50% ), linear-gradient( to right, transparent 87%, #789 87%, #4f5d6a 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, #bdb76b 14%, #989244 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, #808000 10%, #4d4d00 13%, transparent 13% ), linear-gradient( to right, transparent 21%, #8b4513 21%, #5e2f0d 25%, transparent 25% ), linear-gradient( to right, transparent 58%, #8b4513 58%, #5e2f0d 64%, transparent 64% ), linear-gradient( to right, transparent 92%, #2f4f4f 92%, #1c2f2f 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, #2f4f4f 96%, #1c2f2f 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, #cd5c5c 35%, #bc3a3a 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, #bc8f8f 78%, #bc8f8f 80%, transparent 80%, transparent 82%, #bc8f8f 82%, #bc8f8f 83%, transparent 83% ), linear-gradient( to right, transparent 66%, #a52a2a 66%, #7c2020 85%, transparent 85% );
+    background-size: 300px 150px;
+    background-position: center bottom;
+    clip-path: circle(150px at center center);
+    animation: flashlight 30s ease-in-out infinite; 
+}
+
+body:after {
+    content: "";
+    width: 25px;
+    height: 10px;
+    position: absolute;
+    left: calc(50% + 59px);
+    bottom: 100px;
+    background-repeat: no-repeat;
+    background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%);
+    background-size: 10px 10px;
+    background-position: left center, right center;
+    animation: eyes 30s infinite;
+}
+
+@keyframes flashlight {
+    0%   { clip-path: circle(150px at -10% -10%); opacity: 1; }
+    10%  { clip-path: circle(180px at 20% 30%); opacity: 1; }
+    20%  { clip-path: circle(120px at 70% 10%); opacity: 1; }
+    30%  { clip-path: circle(160px at 80% 60%); opacity: 1; }
+    35%  { clip-path: circle(150px at 30% 80%); opacity: 1; }
+    40%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+    40.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } 
+    41%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+    41.5%{ clip-path: circle(150px at 60% 86%); opacity: 0.2; } 
+    42%  { clip-path: circle(150px at 60% 86%); opacity: 1; }
+    46%  { clip-path: circle(150px at 60% 86%); opacity: 1; } 
+    47%  { clip-path: circle(180px at 60% 86%); opacity: 1; }
+    52%  { clip-path: circle(130px at 20% 50%); opacity: 1; }
+    58%  { clip-path: circle(160px at 80% 40%); opacity: 1; }
+    64%  { clip-path: circle(150px at 50% 50%); opacity: 1; } 
+    64.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+    65%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
+    65.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+    66%  { clip-path: circle(150px at 50% 50%); opacity: 1; }
+    66.5%{ clip-path: circle(150px at 50% 50%); opacity: 0; }
+    67%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } 
+    82%  { clip-path: circle(200vw at 50% 50%); opacity: 1; } 
+    83%  { clip-path: circle(150px at 50% 50%); opacity: 1; } 
+    88%  { clip-path: circle(180px at 15% 15%); opacity: 1; }
+    94%  { clip-path: circle(120px at 85% 85%); opacity: 1; }
+    100% { clip-path: circle(150px at 150% 150%); opacity: 1; }
+}
+
+@keyframes eyes {
+    0%, 39% { opacity: 0; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
+    40%   { opacity: 1; transform: scaleY(1); background-image: radial-gradient(circle, #fff 50%, transparent 50%), radial-gradient(circle, #fff 50%, transparent 50%); filter: none; }
+    41.5% { transform: scaleY(1); } 
+    42%   { transform: scaleY(0); } 
+    42.5% { transform: scaleY(1); background-image: radial-gradient(circle, #ff0000 50%, transparent 50%), radial-gradient(circle, #ff0000 50%, transparent 50%); filter: drop-shadow(0 0 10px #ff0000); } 
+    45%   { opacity: 1; }
+    46%, 100% { opacity: 0; }
+}
+
+/* Main Application Container */
 .app-container {
     max-width: 600px;
     width: 100%;
-    background: rgba(10, 25, 47, 0.7); /* พื้นหลังโปร่งแสง (สีน้ำเงินเข้ม) */
-    backdrop-filter: blur(10px); /* เอฟเฟกต์กระจกฝ้า */
+    background: rgba(10, 25, 47, 0.7); 
+    backdrop-filter: blur(10px); 
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(52, 152, 219, 0.3);
     padding: 30px;
     border-radius: 20px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-    z-index: 2; /* ทำให้เนื้อหาอยู่บนสุด */
+    z-index: 2; 
 }
 
 /* Header */
@@ -157,7 +130,7 @@ header h1 {
     margin: 0 0 10px 0;
     font-size: 28px;
     font-weight: 700;
-    text-shadow: 0 0 10px rgba(52, 152, 219, 0.7); /* เปลี่ยนเงาเป็นสีน้ำเงิน */
+    text-shadow: 0 0 10px rgba(52, 152, 219, 0.7); 
 }
 
 header p {
@@ -168,7 +141,7 @@ header p {
 
 /* Search Box */
 .search-box {
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .search-box label {
@@ -198,8 +171,42 @@ header p {
 
 .search-box input:focus {
     outline: none;
-    border-color: #3498db; /* เปลี่ยนสีเส้นขอบเมื่อ focus เป็นสีน้ำเงิน */
-    box-shadow: 0 0 15px rgba(52, 152, 219, 0.6); /* เปลี่ยนเงาเมื่อ focus เป็นสีน้ำเงิน */
+    border-color: #3498db; 
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.6); 
+}
+
+/* Select Box */
+.search-box select {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid rgba(52, 152, 219, 0.4);
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-family: 'Sarabun', sans-serif;
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.3);
+    color: #ffffff;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23FFFFFF%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat, repeat;
+    background-position: right .7em top 50%, 0 0;
+    background-size: .65em auto, 100%;
+}
+
+.search-box select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 15px rgba(52, 152, 219, 0.6);
+}
+
+.search-box select option {
+    background: #0a192f;
+    color: #fff;
+    padding: 10px;
 }
 
 /* Result Box */
@@ -222,10 +229,10 @@ header p {
 .result-display {
     font-size: 48px;
     font-weight: bold;
-    color: #4dabf7; /* เปลี่ยนสีตัวอักษรผลลัพธ์เป็นสีฟ้าสว่าง */
-    text-shadow: 0 0 15px rgba(77, 171, 247, 0.7); /* เปลี่ยนเงาผลลัพธ์เป็นสีฟ้าสว่าง */
+    color: #4dabf7; 
+    text-shadow: 0 0 15px rgba(77, 171, 247, 0.7); 
     margin-top: 10px;
-    min-height: 60px; /* จองพื้นที่ไว้กัน layout กระโดด */
+    min-height: 60px; 
     line-height: 60px;
 }
 
@@ -236,12 +243,13 @@ header p {
     background: rgba(255, 255, 255, 0.05);
     padding: 15px;
     border-radius: 8px;
-    border-left: 4px solid #3498db; /* เปลี่ยนแถบด้านซ้ายเป็นสีน้ำเงิน */
+    border-left: 4px solid #3498db; 
 }
 
 .guide h3 {
     margin-top: 0;
     color: #fff;
+    margin-bottom: 5px;
 }
 
 /* Footer */
@@ -250,4 +258,130 @@ footer {
     margin-top: 30px;
     font-size: 12px;
     color: #999;
+}
+
+
+/* ==================================
+   Copy Button Styles (Converted from SCSS)
+   ================================== */
+@keyframes hue-rotate {
+  from { filter: hue-rotate(0deg); }
+  to { filter: hue-rotate(360deg); }
+}
+
+.copy-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.button--bubble__container {
+  position: relative;
+  display: inline-block;
+  animation: hue-rotate 10s linear infinite; /* เอฟเฟกต์เปลี่ยนสีตลอดเวลาเฉพาะปุ่ม */
+}
+
+.button {
+  -webkit-font-smoothing: antialiased;
+  background-color: #222;
+  border: none;
+  color: #fff;
+  display: inline-block;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  user-select: none;
+  letter-spacing: 1px;
+  padding: 15px 30px;
+  text-transform: uppercase;
+  transition: all 0.1s ease-out;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #90feb5;
+  color: #222;
+}
+
+.button:active {
+  transform: scale(0.95);
+}
+
+.button--bubble {
+  position: relative;
+  z-index: 2;
+  color: white;
+  background: #222;
+}
+
+.button--bubble:hover {
+  background: #90feb5;
+  color: #222;
+}
+
+/* Darken action color #90feb5 roughly by 15% -> #44eb7f for inner effects */
+.button--bubble:hover + .button--bubble__effect-container .circle {
+  background: #44eb7f; 
+}
+
+.button--bubble:hover + .button--bubble__effect-container .button {
+  background: #44eb7f;
+}
+
+.button--bubble:active + .button--bubble__effect-container {
+  transform: scale(0.95);
+}
+
+.button--bubble__container .effect-button {
+  position: absolute;
+  width: 50%;
+  height: 25%;
+  top: 50%;
+  left: 25%;
+  z-index: 1;
+  transform: translateY(-50%);
+  background: #222;
+  transition: background 0.1s ease-out;
+}
+
+.button--bubble__effect-container {
+  position: absolute;
+  display: block;
+  width: 200%;
+  height: 400%;
+  top: -150%;
+  left: -50%;
+  -webkit-filter: url("#goo");
+  filter: url("#goo");
+  transition: all 0.1s ease-out;
+  pointer-events: none;
+}
+
+.button--bubble__effect-container .circle {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  border-radius: 15px;
+  background: #222;
+  transition: background 0.1s ease-out;
+}
+
+.button--bubble__effect-container .circle.top-left {
+  top: 40%;
+  left: 27%;
+}
+
+.button--bubble__effect-container .circle.bottom-right {
+  bottom: 40%;
+  right: 27%;
+}
+
+.goo {
+  position: absolute;
+  visibility: hidden;
+  width: 1px;
+  height: 1px;
 }

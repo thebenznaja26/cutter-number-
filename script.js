@@ -1,90 +1,286 @@
 document.addEventListener('DOMContentLoaded', () => {
     const authorInput = document.getElementById('authorInput');
     const resultDisplay = document.getElementById('result');
+    const cutterTypeSelect = document.getElementById('cutterType');
+    const copyWrapper = document.getElementById('copyWrapper');
 
-    let sortedCutterList = []; // เปลี่ยนมาใช้ Array ที่เรียงลำดับแล้ว
+    let thaiSortedList = [];
+    let sanbornSortedList =[];
+    let isThaiLoaded = false;
+    let isSanbornLoaded = false;
+
     const initialMessage = '- รอการค้นหา -';
     const notFoundMessage = 'ไม่พบข้อมูล';
     const errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
 
-    // 1. ฟังก์ชันสำหรับโหลดและเตรียมข้อมูล (ไม่มีการแก้ไข)
-    async function setupCutterData() {
+    // ฟังก์ชันโหลดข้อมูลและจัดเรียงเพื่อการค้นหา
+    async function loadData(url, type) {
         try {
-            // ปิดการใช้งาน input ชั่วคราวจนกว่าข้อมูลจะพร้อม
-            authorInput.disabled = true;
-            authorInput.placeholder = "กำลังโหลดฐานข้อมูล...";
-
-            const response = await fetch('cutter_data.json');
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const cutterData = await response.json();
+            const text = await response.text();
+            
+            // แก้ไข Trailing comma จากรูปแบบ Python
+            const cleanedText = text.replace(/,\s*}/g, '}');
+            const data = JSON.parse(cleanedText);
+            
+            const expandedData = [];
+            
+            Object.entries(data).forEach(([key, value]) => {
+                if (type === 'thai' && key.includes(',')) {
+                    key.split(',').forEach(k => {
+                        expandedData.push([k.trim(), value]);
+                    });
+                } else {
+                    expandedData.push([key.trim(), value]);
+                }
+            });
 
-            // แปลง Object เป็น Array และเรียงลำดับตามตัวอักษรของ key
-            sortedCutterList = Object.entries(cutterData).sort((a, b) => {
-                // ใช้ key (ชื่อ) ในการเปรียบเทียบและเรียงลำดับ
-                // เราใช้ชื่อแรกในกรณีที่มีหลายชื่อ เช่น "นิมิต, นิมิตร"
-                const keyA = a[0].split(',')[0].trim();
-                const keyB = b[0].split(',')[0].trim();
-                return keyA.localeCompare(keyB, 'th'); // เรียงลำดับตามหลักภาษาไทย
+            expandedData.sort((a, b) => {
+                return type === 'thai' ? a[0].localeCompare(b[0], 'th') : a[0].localeCompare(b[0], 'en');
             });
             
-            // เมื่อโหลดข้อมูลสำเร็จ, เปิดให้ใช้งาน
-            authorInput.disabled = false;
-            authorInput.placeholder = "เช่น นิภา, มงคล, สุชาติ...";
-            console.log('Cutter data loaded and sorted successfully.');
-
+            return expandedData;
         } catch (error) {
-            console.error("Could not load cutter data:", error);
-            resultDisplay.textContent = errorMessage;
-            resultDisplay.style.color = '#e74c3c'; // สีแดง
-            authorInput.placeholder = "ไม่สามารถโหลดฐานข้อมูลได้";
+            console.error(`Could not load data from ${url}:`, error);
+            return null;
         }
     }
 
-    // 2. ฟังก์ชันสำหรับค้นหาเลขคัตเตอร์ (ปรับปรุงใหม่ทั้งหมด)
-    function findCutterNumber(query) {
-        if (!query) {
-            return { result: initialMessage, color: '#333' };
+    async function init() {
+        authorInput.disabled = true;
+        authorInput.placeholder = "กำลังโหลดฐานข้อมูล...";
+
+        const [thaiData, sanbornData] = await Promise.all([
+            loadData('Thai_cutter.py', 'thai'),
+            loadData('Sanborn_cutter.py', 'sanborn')
+        ]);
+
+        if (thaiData) {
+            thaiSortedList = thaiData;
+            isThaiLoaded = true;
+        }
+        if (sanbornData) {
+            sanbornSortedList = sanbornData;
+            isSanbornLoaded = true;
         }
 
-        const normalizedQuery = query.trim();
+        authorInput.disabled = false;
+        updatePlaceholder();
+        
+        if (authorInput.value) {
+            handleSearch();
+        }
 
-        // **ตรรกะใหม่:** ค้นหาจากท้ายรายการกลับมาด้านหน้า (Search from the end of the list backwards)
-        // วิธีนี้จะหา "รายการสุดท้าย" ที่มีชื่อน้อยกว่าหรือเท่ากับคำค้นหาได้อย่างถูกต้องและรวดเร็ว
-        // This method correctly and quickly finds the *last item* whose name is less than or equal to the search query.
-        for (let i = sortedCutterList.length - 1; i >= 0; i--) {
-            const [key, cutterNumber] = sortedCutterList[i];
-            const primaryName = key.split(',')[0].trim();
+        // Initialize Copy Button GSAP Animation
+        initButtonEffect();
+    }
 
-            // ตรวจสอบว่าคำค้นหา (normalizedQuery) มากกว่าหรือเท่ากับชื่อในตาราง (primaryName) หรือไม่
-            // ตามหลักการเปรียบเทียบตัวอักษรภาษาไทย
-            // Check if the search query is alphabetically greater than or equal to the name in the table.
-            if (normalizedQuery.localeCompare(primaryName, 'th') >= 0) {
-                // ถ้าใช่, เราเจอรายการที่ถูกต้องแล้ว เพราะเราค้นจากท้ายมา
-                // ดังนั้นให้คืนผลลัพธ์และออกจากฟังก์ชันทันที
-                // If yes, we've found the correct entry because we're searching from the end.
-                // So, return the result and exit the function immediately.
-                return { result: cutterNumber, color: 'var(--secondary-color)' };
-            }
+    function updatePlaceholder() {
+        const type = cutterTypeSelect.value;
+        if (type === 'thai') {
+            authorInput.placeholder = "เช่น นิภา, มงคล, สุชาติ...";
+        } else if (type === 'sanborn') {
+            authorInput.placeholder = "เช่น Abbott, Smith, Taylor...";
+        } else if (type === 'english') {
+            authorInput.placeholder = "เช่น Adams, Queen, The United States...";
         }
         
-        // ถ้าลูปจนจบแล้วยังไม่เจอ (เช่น พิมพ์ "ก" แต่ข้อมูลเริ่มที่ "น")
-        // แสดงว่าคำค้นหาอยู่ก่อนรายการแรกสุดในตาราง
-        // If the loop completes without finding a match, the query comes before the very first item in the table.
+        authorInput.value = '';
+        resultDisplay.textContent = initialMessage;
+        resultDisplay.style.color = '#fff';
+        copyWrapper.style.display = 'none'; // ซ่อนปุ่มก็อปปี้
+    }
+
+    function findInList(query, sortedList, locale) {
+        if (!query) return { result: initialMessage, color: '#fff' };
+        
+        const normalizedQuery = query.trim();
+        
+        for (let i = sortedList.length - 1; i >= 0; i--) {
+            const [primaryName, cutterNumber] = sortedList[i];
+            
+            const q = locale === 'en' ? normalizedQuery.toLowerCase() : normalizedQuery;
+            const p = locale === 'en' ? primaryName.toLowerCase() : primaryName;
+
+            if (q.localeCompare(p, locale) >= 0) {
+                return { result: cutterNumber, color: 'var(--secondary-color, #4dabf7)' };
+            }
+        }
         return { result: notFoundMessage, color: '#e74c3c' };
     }
 
-    // 3. เพิ่ม Event Listener ให้กับช่องค้นหา (ไม่มีการแก้ไข)
-    authorInput.addEventListener('input', () => {
-        const query = authorInput.value;
-        const searchResult = findCutterNumber(query);
+    // ลอจิก LC Cutter แบบไม่นับ A, An, The และให้ผลลัพธ์เป็น ตัวอักษร 1 ตัว + เลข 3 ตัว (รวมเป็น 4 หลัก)
+    function calculateLCCutter(name) {
+        if (!name) return { result: initialMessage, color: '#fff' };
         
-        // อัปเดตผลลัพธ์และสี
+        // ลบคำนำหน้า A, An, The (แบบ case-insensitive) แล้วทำเป็นตัวพิมพ์ใหญ่
+        name = name.replace(/^(A|AN|THE)\s+/i, '').trim().toUpperCase();
+        
+        if (name.length === 0) return { result: initialMessage, color: '#fff' };
+
+        let cutter = name.charAt(0);
+        let remaining = name.substring(1).toLowerCase();
+        
+        const getVowelNum = (c) => {
+            if (c < 'd') return '2'; if (c < 'l') return '3'; if (c < 'n') return '4';
+            if (c < 'p') return '5'; if (c < 'r') return '6'; if (c < 's') return '7';
+            if (c < 'u') return '8'; return '9';
+        };
+
+        const getSNum = (c) => {
+            if (c < 'c') return '2'; if (c < 'e') return '3'; if (c < 'h') return '4';
+            if (c < 'm') return '5'; if (c < 't') return '6'; if (c < 'u') return '7';
+            if (c < 'w') return '8'; return '9';
+        };
+
+        const getQuNum = (c) => {
+            if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'o') return '5';
+            if (c < 'r') return '6'; if (c < 't') return '7'; if (c < 'y') return '8';
+            return '9';
+        };
+
+        const getConsonantNum = (c) => {
+            if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'o') return '5';
+            if (c < 'r') return '6'; if (c < 'u') return '7'; if (c < 'y') return '8';
+            return '9';
+        };
+
+        const getExpansionNum = (c) => {
+            if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'm') return '5';
+            if (c < 'p') return '6'; if (c < 't') return '7'; if (c < 'w') return '8';
+            return '9';
+        };
+
+        if (['A','E','I','O','U'].includes(cutter)) {
+            cutter += getVowelNum(remaining.charAt(0) || '');
+            remaining = remaining.substring(1);
+        } else if (cutter === 'S') {
+            cutter += getSNum(remaining.charAt(0) || '');
+            remaining = remaining.substring(1);
+        } else if (cutter === 'Q') {
+            let c = remaining.charAt(0) || '';
+            if (c === 'u') {
+                cutter += getQuNum(remaining.charAt(1) || '');
+                remaining = remaining.substring(2);
+            } else {
+                cutter += '2';
+                remaining = remaining.substring(1);
+            }
+        } else {
+            cutter += getConsonantNum(remaining.charAt(0) || '');
+            remaining = remaining.substring(1);
+        }
+
+        for (let i = 0; i < remaining.length; i++) {
+            let ch = remaining.charAt(i);
+            if (ch >= 'a' && ch <= 'z') {
+                cutter += getExpansionNum(ch);
+            }
+        }
+
+        // กำจัดความยาวให้อยู่ที่สูงสุด 4 ตัว (1 ตัวอักษร + 3 ตัวเลข)
+        cutter = cutter.substring(0, 4);
+
+        return { result: cutter, color: 'var(--secondary-color, #4dabf7)' };
+    }
+
+    function handleSearch() {
+        const query = authorInput.value;
+        const type = cutterTypeSelect.value;
+        let searchResult;
+        
+        if (type === 'thai') {
+            if (!isThaiLoaded) searchResult = { result: errorMessage, color: '#e74c3c' };
+            else searchResult = findInList(query, thaiSortedList, 'th');
+        } else if (type === 'sanborn') {
+            if (!isSanbornLoaded) searchResult = { result: errorMessage, color: '#e74c3c' };
+            else searchResult = findInList(query, sanbornSortedList, 'en');
+        } else if (type === 'english') {
+            searchResult = calculateLCCutter(query);
+        }
+        
         resultDisplay.textContent = searchResult.result;
         resultDisplay.style.color = searchResult.color;
-    });
 
-    // 4. เริ่มโหลดและเตรียมข้อมูลทันที (ไม่มีการแก้ไข)
-    setupCutterData();
+        // แสดงหรือซ่อนปุ่มคัดลอกเมื่อมีผลลัพธ์
+        if (searchResult.result !== initialMessage && searchResult.result !== notFoundMessage && searchResult.result !== errorMessage) {
+            copyWrapper.style.display = 'flex';
+        } else {
+            copyWrapper.style.display = 'none';
+        }
+    }
+
+    cutterTypeSelect.addEventListener('change', updatePlaceholder);
+    authorInput.addEventListener('input', handleSearch);
+
+    // ระบบอนิเมชั่นและปุ่มคัดลอกด้วย GSAP
+    function initButtonEffect() {
+        $('.button--bubble').each(function() {
+            var $circlesTopLeft = $(this).parent().find('.circle.top-left');
+            var $circlesBottomRight = $(this).parent().find('.circle.bottom-right');
+
+            var tl = new TimelineLite();
+            var tl2 = new TimelineLite();
+            var btTl = new TimelineLite({ paused: true });
+
+            tl.to($circlesTopLeft, 1.2, { x: -25, y: -25, scaleY: 2, ease: SlowMo.ease.config(0.1, 0.7, false) });
+            tl.to($circlesTopLeft.eq(0), 0.1, { scale: 0.2, x: '+=6', y: '-=2' });
+            tl.to($circlesTopLeft.eq(1), 0.1, { scaleX: 1, scaleY: 0.8, x: '-=10', y: '-=7' }, '-=0.1');
+            tl.to($circlesTopLeft.eq(2), 0.1, { scale: 0.2, x: '-=15', y: '+=6' }, '-=0.1');
+            tl.to($circlesTopLeft.eq(0), 1, { scale: 0, x: '-=5', y: '-=15', opacity: 0 });
+            tl.to($circlesTopLeft.eq(1), 1, { scaleX: 0.4, scaleY: 0.4, x: '-=10', y: '-=10', opacity: 0 }, '-=1');
+            tl.to($circlesTopLeft.eq(2), 1, { scale: 0, x: '-=15', y: '+=5', opacity: 0 }, '-=1');
+
+            var tlBt1 = new TimelineLite();
+            var tlBt2 = new TimelineLite();
+            
+            tlBt1.set($circlesTopLeft, { x: 0, y: 0, rotation: -45 });
+            tlBt1.add(tl);
+
+            tl2.set($circlesBottomRight, { x: 0, y: 0 });
+            tl2.to($circlesBottomRight, 1.1, { x: 30, y: 30, ease: SlowMo.ease.config(0.1, 0.7, false) });
+            tl2.to($circlesBottomRight.eq(0), 0.1, { scale: 0.2, x: '-=6', y: '+=3' });
+            tl2.to($circlesBottomRight.eq(1), 0.1, { scale: 0.8, x: '+=7', y: '+=3' }, '-=0.1');
+            tl2.to($circlesBottomRight.eq(2), 0.1, { scale: 0.2, x: '+=15', y: '-=6' }, '-=0.2');
+            tl2.to($circlesBottomRight.eq(0), 1, { scale: 0, x: '+=5', y: '+=15', opacity: 0 });
+            tl2.to($circlesBottomRight.eq(1), 1, { scale: 0.4, x: '+=7', y: '+=7', opacity: 0 }, '-=1');
+            tl2.to($circlesBottomRight.eq(2), 1, { scale: 0, x: '+=15', y: '-=5', opacity: 0 }, '-=1');
+            
+            tlBt2.set($circlesBottomRight, { x: 0, y: 0, rotation: 45 });
+            tlBt2.add(tl2);
+
+            btTl.add(tlBt1);
+            btTl.to($(this).parent().find('.button.effect-button'), 0.8, { scaleY: 1.1 }, 0.1);
+            btTl.add(tlBt2, 0.2);
+            btTl.to($(this).parent().find('.button.effect-button'), 1.8, { scale: 1, ease: Elastic.easeOut.config(1.2, 0.4) }, 1.2);
+
+            btTl.timeScale(2.6);
+
+            $(this).on('mouseover', function() {
+                btTl.restart();
+            });
+        });
+
+        // ฟังก์ชันคัดลอก (Copy to Clipboard)
+        $('#copyButton').on('click', function(e) {
+            e.preventDefault();
+            const textToCopy = $('#result').text();
+            
+            if (textToCopy && textToCopy !== initialMessage && textToCopy !== notFoundMessage) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    const $btn = $(this);
+                    const originalText = "คัดลอก (Copy)";
+                    $btn.text('คัดลอกสำเร็จ!');
+                    setTimeout(() => {
+                        $btn.text(originalText);
+                    }, 2000);
+                });
+            }
+        });
+    }
+
+    init();
 });
