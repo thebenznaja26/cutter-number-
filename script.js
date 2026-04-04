@@ -76,6 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Initialize Copy Button GSAP Animation
         initButtonEffect();
+        
+        // Initialize Visitor Counter
+        initVisitorCounter();
     }
 
     function updatePlaceholder() {
@@ -280,6 +283,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
         });
+    }
+
+    // ฟังก์ชันนับจำนวนคนเข้าเว็บ (ใช้งานผ่าน Free API: counterapi.dev)
+    function initVisitorCounter() {
+        const namespace = 'cutternumber_app_library'; // ชื่อโปรเจกต์ (ตั้งให้ไม่ซ้ำใคร)
+        const key = 'visits'; // คีย์สำหรับการนับ
+        
+        fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.count) {
+                    document.getElementById('viewCount').innerText = data.count.toLocaleString();
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching visitor count:', error);
+                document.getElementById('viewCount').innerText = "-";
+            });
     }
 
     init();

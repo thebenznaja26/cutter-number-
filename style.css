@@ -17,8 +17,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100%;
-    overflow: hidden; 
+    min-height: 100vh;
+    overflow-x: hidden; /* ป้องกันแนวนอนล้นหน้าจอ */
+    overflow-y: auto; /* อนุญาตให้เลื่อนขึ้นลงในมือถือได้ */
     position: relative; 
     --color-0: #fff;
     --color-1: #111;
@@ -34,13 +35,14 @@ body {
     background-image: linear-gradient( to top, var(--color-2) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 80%), linear-gradient(to right, var(--color-2), var(--color-4) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-2) 6%, var(--color-4) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, var(--color-2) 27%, var(--color-4) 34%, transparent 34% ), linear-gradient( to right, transparent 51%, var(--color-2) 51%, var(--color-4) 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, var(--color-2) 42%, var(--color-4) 44%, transparent 44% ), linear-gradient( to right, transparent 45%, var(--color-2) 45%, var(--color-4) 47%, transparent 47% ), linear-gradient( to right, transparent 48%, var(--color-2) 48%, var(--color-4) 50%, transparent 50% ), linear-gradient( to right, transparent 87%, var(--color-2) 87%, var(--color-4) 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, var(--color-2) 14%, var(--color-4) 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, var(--color-2) 10%, var(--color-4) 13%, transparent 13% ), linear-gradient( to right, transparent 21%, var(--color-2) 21%, #1a1a1a 25%, transparent 25% ), linear-gradient( to right, transparent 58%, var(--color-2) 58%, var(--color-4) 64%, transparent 64% ), linear-gradient( to right, transparent 92%, var(--color-2) 92%, var(--color-4) 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, var(--color-2) 96%, #1a1a1a 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, var(--color-2) 35%, var(--color-4) 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, var(--color-3) 78%, var(--color-3) 80%, transparent 80%, transparent 82%, var(--color-3) 82%, var(--color-3) 83%, transparent 83% ), linear-gradient( to right, transparent 66%, var(--color-2) 66%, var(--color-4) 85%, transparent 85% );
     background-size: 300px 150px;
     background-position: center bottom;
+    background-attachment: fixed; /* ทำให้พื้นหลังไม่เลื่อนตามหน้าจอ */
 }
 
 body:before {
     content: "";
     width: 100%;
     height: 100%;
-    position: absolute;
+    position: fixed; /* แก้จาก absolute เพื่อให้แสดงผลถูกในมือถือเวลามีการเลื่อนจอ */
     inset: 0;
     background-color: var(--color-1);
     background-image: linear-gradient( to top, var(--color-5) 5%, var(--color-1) 6%, var(--color-1) 7%, transparent 7% ), linear-gradient(to bottom, var(--color-1) 30%, transparent 30%), linear-gradient(to right, var(--color-6), var(--color-7) 5%, transparent 5%), linear-gradient( to right, transparent 6%, var(--color-8) 6%, var(--color-9) 9%, transparent 9% ), linear-gradient( to right, transparent 27%, #556b2f 27%, #39481f 34%, transparent 34% ), linear-gradient( to right, transparent 51%, #fa8072 51%, #f85441 57%, transparent 57% ), linear-gradient(to bottom, var(--color-1) 35%, transparent 35%), linear-gradient( to right, transparent 42%, #008080 42%, #004d4d 44%, transparent 44% ), linear-gradient( to right, transparent 45%, #008080 45%, #004d4d 47%, transparent 47% ), linear-gradient( to right, transparent 48%, #008080 48%, #004d4d 50%, transparent 50% ), linear-gradient( to right, transparent 87%, #789 87%, #4f5d6a 91%, transparent 91% ), linear-gradient(to bottom, var(--color-1) 37.5%, transparent 37.5%), linear-gradient( to right, transparent 14%, #bdb76b 14%, #989244 20%, transparent 20% ), linear-gradient(to bottom, var(--color-1) 40%, transparent 40%), linear-gradient( to right, transparent 10%, #808000 10%, #4d4d00 13%, transparent 13% ), linear-gradient( to right, transparent 21%, #8b4513 21%, #5e2f0d 25%, transparent 25% ), linear-gradient( to right, transparent 58%, #8b4513 58%, #5e2f0d 64%, transparent 64% ), linear-gradient( to right, transparent 92%, #2f4f4f 92%, #1c2f2f 95%, transparent 95% ), linear-gradient(to bottom, var(--color-1) 48%, transparent 48%), linear-gradient( to right, transparent 96%, #2f4f4f 96%, #1c2f2f 99%, transparent 99% ), linear-gradient( to bottom, transparent 68.5%, transparent 76%, var(--color-1) 76%, var(--color-1) 77.5%, transparent 77.5%, transparent 86%, var(--color-1) 86%, var(--color-1) 87.5%, transparent 87.5% ), linear-gradient( to right, transparent 35%, #cd5c5c 35%, #bc3a3a 41%, transparent 41% ), linear-gradient(to bottom, var(--color-1) 68%, transparent 68%), linear-gradient( to right, transparent 78%, #bc8f8f 78%, #bc8f8f 80%, transparent 80%, transparent 82%, #bc8f8f 82%, #bc8f8f 83%, transparent 83% ), linear-gradient( to right, transparent 66%, #a52a2a 66%, #7c2020 85%, transparent 85% );
@@ -48,13 +50,14 @@ body:before {
     background-position: center bottom;
     clip-path: circle(150px at center center);
     animation: flashlight 30s ease-in-out infinite; 
+    z-index: 0;
 }
 
 body:after {
     content: "";
     width: 25px;
     height: 10px;
-    position: absolute;
+    position: fixed; /* แก้จาก absolute */
     left: calc(50% + 59px);
     bottom: 100px;
     background-repeat: no-repeat;
@@ -62,6 +65,7 @@ body:after {
     background-size: 10px 10px;
     background-position: left center, right center;
     animation: eyes 30s infinite;
+    z-index: 1;
 }
 
 @keyframes flashlight {
@@ -115,6 +119,7 @@ body:after {
     border-radius: 20px;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     z-index: 2; 
+    margin: 40px 0; /* เพิ่ม margin กันติดขอบมือถือเวลาเลื่อน */
 }
 
 /* Header */
@@ -260,9 +265,85 @@ footer {
     color: #999;
 }
 
+/* ==================================
+   Visitor Counter (ปุ่มนับสถิติมุมขวาล่าง แบบทันสมัย)
+   ================================== */
+.visitor-counter {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(10, 25, 47, 0.6); /* โปร่งแสงแบบ Glassmorphism */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(144, 254, 181, 0.2); /* กรอบสีเขียวอ่อนๆ */
+    padding: 10px 18px;
+    border-radius: 30px; /* ขอบมนเป็นแคปซูล */
+    font-size: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(144, 254, 181, 0.05);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.visitor-counter:hover {
+    transform: translateY(-5px);
+    border-color: rgba(144, 254, 181, 0.5);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5), 0 0 15px rgba(144, 254, 181, 0.2);
+}
+
+/* ไอคอนดวงตา SVG */
+.view-icon {
+    width: 18px;
+    height: 18px;
+    stroke: #90feb5; /* สีเขียวมิ้นต์เข้ากับปุ่มเว็บ */
+    animation: pulse-glow 2.5s infinite; /* เอฟเฟกต์กระพริบเบาๆ */
+}
+
+/* ตัวอักษรคำว่า "ผู้เข้าชม:" */
+.vc-text {
+    color: #cccccc;
+    font-weight: 400;
+}
+
+/* ตัวเลขสถิติ */
+.visitor-counter strong {
+    color: #90feb5;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    text-shadow: 0 0 8px rgba(144, 254, 181, 0.4); /* เรืองแสงที่ตัวเลข */
+}
+
+/* Animation สำหรับไอคอน */
+@keyframes pulse-glow {
+    0% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px rgba(144,254,181,0.2)); }
+    50% { transform: scale(1.15); opacity: 1; filter: drop-shadow(0 0 6px rgba(144,254,181,0.8)); }
+    100% { transform: scale(1); opacity: 0.8; filter: drop-shadow(0 0 2px rgba(144,254,181,0.2)); }
+}
+
+/* เพิ่มลงในส่วน Responsive Media Queries ของเดิม */
+@media screen and (max-width: 600px) {
+    .visitor-counter {
+        bottom: 15px;
+        right: 15px;
+        padding: 8px 14px;
+        font-size: 12px;
+    }
+    .view-icon {
+        width: 15px;
+        height: 15px;
+    }
+    .visitor-counter strong {
+        font-size: 13px;
+    }
+}
+
 
 /* ==================================
-   Copy Button Styles (Converted from SCSS)
+   Copy Button Styles
    ================================== */
 @keyframes hue-rotate {
   from { filter: hue-rotate(0deg); }
@@ -279,7 +360,7 @@ footer {
 .button--bubble__container {
   position: relative;
   display: inline-block;
-  animation: hue-rotate 10s linear infinite; /* เอฟเฟกต์เปลี่ยนสีตลอดเวลาเฉพาะปุ่ม */
+  animation: hue-rotate 10s linear infinite; 
 }
 
 .button {
@@ -322,7 +403,6 @@ footer {
   color: #222;
 }
 
-/* Darken action color #90feb5 roughly by 15% -> #44eb7f for inner effects */
 .button--bubble:hover + .button--bubble__effect-container .circle {
   background: #44eb7f; 
 }
@@ -384,4 +464,45 @@ footer {
   visibility: hidden;
   width: 1px;
   height: 1px;
+}
+
+/* ==================================
+   Responsive Media Queries (รองรับมือถือ)
+   ================================== */
+@media screen and (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    .app-container {
+        padding: 20px;
+        margin: 20px 0;
+    }
+    header h1 {
+        font-size: 24px;
+    }
+    header p {
+        font-size: 14px;
+    }
+    .search-box label {
+        font-size: 16px;
+    }
+    .search-box input, .search-box select {
+        padding: 12px;
+        font-size: 16px;
+    }
+    .result-display {
+        font-size: 36px;
+        min-height: 50px;
+        line-height: 50px;
+    }
+    .button {
+        padding: 12px 24px;
+        font-size: 14px;
+    }
+    .visitor-counter {
+        bottom: 10px;
+        right: 10px;
+        font-size: 12px;
+        padding: 6px 12px;
+    }
 }
