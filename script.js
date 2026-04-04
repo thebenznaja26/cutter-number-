@@ -285,22 +285,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ฟังก์ชันนับจำนวนคนเข้าเว็บ (ใช้งานผ่าน Free API: counterapi.dev)
+  // ฟังก์ชันนับจำนวนคนเข้าเว็บแบบ Real-time (ใช้งานผ่าน Free API: counterapi.dev)
     function initVisitorCounter() {
-        const namespace = 'cutternumber_app_library'; // ชื่อโปรเจกต์ (ตั้งให้ไม่ซ้ำใคร)
+        const namespace = 'cutternumber_app_library'; // ชื่อโปรเจกต์
         const key = 'visits'; // คีย์สำหรับการนับ
+        const viewCountElement = document.getElementById('viewCount');
         
+        // 1. ทำงานครั้งแรกเมื่อเข้าเว็บ: ส่งคำสั่ง /up เพื่อนับยอดเพิ่ม 1 คน
         fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
             .then(response => response.json())
             .then(data => {
                 if (data && data.count) {
-                    document.getElementById('viewCount').innerText = data.count.toLocaleString();
+                    viewCountElement.innerText = data.count.toLocaleString();
                 }
             })
             .catch(error => {
                 console.error('Error fetching visitor count:', error);
-                document.getElementById('viewCount').innerText = "-";
+                viewCountElement.innerText = "-";
             });
+
+        // 2. ระบบ Real-time: เช็คยอดล่าสุดทุกๆ 5 วินาที (โดยใช้แค่คีย์เฉยๆ ไม่ใส่ /up เพื่อไม่ให้ยอดบวกมั่ว)
+        setInterval(() => {
+            fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.count) {
+                        // เช็คว่าถ้ายอดเปลี่ยน ให้รันแอนิเมชันเด้งเบาๆ
+                        const currentDisplayed = viewCountElement.innerText.replace(/,/g, '');
+                        if(currentDisplayed !== data.count.toString() && currentDisplayed !== "-") {
+                            viewCountElement.style.transform = "scale(1.3)";
+                            viewCountElement.style.color = "#ffffff";
+                            setTimeout(() => {
+                                viewCountElement.style.transform = "scale(1)";
+                                viewCountElement.style.color = "#90feb5";
+                            }, 300);
+                        }
+                        
+                        // อัปเดตตัวเลขล่าสุด
+                        viewCountElement.innerText = data.count.toLocaleString();
+                    }
+                })
+                .catch(error => console.error('Realtime update failed:', error));
+        }, 5000); // 5000 มิลลิวินาที = 5 วินาที (ปรับให้เร็วขึ้นหรือช้าลงได้ตรงนี้)
     }
 
     init();
