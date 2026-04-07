@@ -15,7 +15,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="ค้นหาเลขคัตเตอร์ออนไลน์ ฟรี - สำหรับบรรณารักษ์">
     <meta property="og:description" content="เครื่องมือช่วยค้นหาเลขผู้แต่ง (Cutter Number) สำหรับบรรณารักษ์ รองรับภาษาไทยและอังกฤษ">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1200&auto=format&fit=crop"> <!-- เปลี่ยนเป็น URL รูปภาพเว็บคุณได้ -->
+    <meta property="og:image" content="https://images.unsplash.com/photo-1507842217343-583bb7270b66?q=80&w=1200&auto=format&fit=crop"> 
     
     <!-- Structured Data สำหรับ Google Search -->
     <script type="application/ld+json">
@@ -65,13 +65,35 @@
         </header>
 
         <main>
+            <!-- ส่วนเลือกประเภทเลขผู้แต่งแบบ Switch -->
             <div class="search-box">
-                <label for="cutterType">เลือกประเภทเลขผู้แต่ง</label>
-                <select id="cutterType">
-                    <option value="thai">เลขผู้แต่งภาษาไทย</option>
-                    <option value="sanborn">เลขผู้แต่งภาษาอังกฤษ (Sanborn)</option>
-                    <option value="english">เลขผู้แต่งภาษาอังกฤษ (LC Cutter)</option>
-                </select>
+                <label>เลือกประเภทเลขผู้แต่ง</label>
+                <div class="switch-container">
+                    <input type="radio" id="typeThai" name="cutterType" value="thai" checked>
+                    <label for="typeThai" class="switch-label">ภาษาไทย</label>
+                    
+                    <input type="radio" id="typeSanborn" name="cutterType" value="sanborn">
+                    <label for="typeSanborn" class="switch-label">Sanborn</label>
+                    
+                    <input type="radio" id="typeEnglish" name="cutterType" value="english">
+                    <label for="typeEnglish" class="switch-label">LC Cutter</label>
+                    
+                    <div class="switch-slider slider-3"></div>
+                </div>
+            </div>
+
+            <!-- ส่วนเลือกจำนวนหลักของ LC Cutter (ซ่อนไว้ก่อน จะแสดงเมื่อเลือก LC Cutter) -->
+            <div class="search-box" id="lcDigitsContainer" style="display: none;">
+                <label>รูปแบบ LC Cutter</label>
+                <div class="switch-container digit-switch">
+                    <input type="radio" id="digit3" name="lcDigits" value="3" checked>
+                    <label for="digit3" class="switch-label">3 หลัก</label>
+                    
+                    <input type="radio" id="digit2" name="lcDigits" value="2">
+                    <label for="digit2" class="switch-label">2 หลัก</label>
+                    
+                    <div class="switch-slider slider-2"></div>
+                </div>
             </div>
 
             <div class="search-box">
@@ -81,7 +103,32 @@
 
             <div class="result-box">
                 <h2>ผลลัพธ์เลขคัตเตอร์:</h2>
-                <div id="result" class="result-display">- รอการค้นหา -</div>
+                
+                <!-- ดีไซน์ตารางดัชนี (Index Style) สำหรับแสดง ก่อนหน้า - ปัจจุบัน - ถัดไป -->
+                <div class="context-wrapper single-mode" id="contextWrapper">
+                    
+                    <!-- แถวก่อนหน้า (จะแสดงเมื่อเจอข้อมูลเท่านั้น) -->
+                    <div class="context-row prev-row" id="prevRow" style="display: none;">
+                        <div class="label-cell">▲ ก่อนหน้า</div>
+                        <div class="name-cell" id="prevName">-</div>
+                        <div class="cutter-cell" id="prevCutter">-</div>
+                    </div>
+                    
+                    <!-- แถวผลลัพธ์หลัก (ตรงกลาง) -->
+                    <div class="context-row main-result">
+                        <div class="label-cell" id="mainLabel"></div>
+                        <div class="name-cell" id="mainName"></div>
+                        <div class="cutter-cell center-text" id="result">- รอการค้นหา -</div>
+                    </div>
+                    
+                    <!-- แถวถัดไป (จะแสดงเมื่อเจอข้อมูลเท่านั้น) -->
+                    <div class="context-row next-row" id="nextRow" style="display: none;">
+                        <div class="label-cell">▼ ถัดไป</div>
+                        <div class="name-cell" id="nextName">-</div>
+                        <div class="cutter-cell" id="nextCutter">-</div>
+                    </div>
+
+                </div>
                 
                 <!-- ปุ่ม Copy Effect -->
                 <div class="copy-wrapper" id="copyWrapper" style="display: none;">
@@ -113,7 +160,7 @@
         </footer>
     </div>
     
-<!-- ระบบนับผู้เข้าชม (มุมขวาล่าง) แบบใหม่ ทันสมัย -->
+    <!-- ระบบนับผู้เข้าชม (มุมขวาล่าง) แบบใหม่ ทันสมัย -->
     <div class="visitor-counter" title="จำนวนผู้เข้าใช้งานเว็บไซต์นี้">
         <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>

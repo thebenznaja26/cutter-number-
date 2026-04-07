@@ -1,8 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
     const authorInput = document.getElementById('authorInput');
     const resultDisplay = document.getElementById('result');
-    const cutterTypeSelect = document.getElementById('cutterType');
     const copyWrapper = document.getElementById('copyWrapper');
+    const lcDigitsContainer = document.getElementById('lcDigitsContainer');
+    
+    // UI สำหรับตารางดัชนี (Context UI)
+    const contextWrapper = document.getElementById('contextWrapper');
+    const prevRow = document.getElementById('prevRow');
+    const nextRow = document.getElementById('nextRow');
+    const mainLabel = document.getElementById('mainLabel');
+    const mainName = document.getElementById('mainName');
+    
+    // ดึงค่า Switch Radio Buttons
+    const cutterTypeRadios = document.querySelectorAll('input[name="cutterType"]');
+    const lcDigitsRadios = document.querySelectorAll('input[name="lcDigits"]');
 
     let thaiSortedList = [];
     let sanbornSortedList =[];
@@ -13,7 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const notFoundMessage = 'ไม่พบข้อมูล';
     const errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
 
-    // ฟังก์ชันโหลดข้อมูลและจัดเรียงเพื่อการค้นหา
+    function getSelectedCutterType() {
+        return document.querySelector('input[name="cutterType"]:checked').value;
+    }
+
+    function getSelectedLCDigits() {
+        return parseInt(document.querySelector('input[name="lcDigits"]:checked').value, 10);
+    }
+
     async function loadData(url, type) {
         try {
             const response = await fetch(url);
@@ -22,12 +40,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const text = await response.text();
             
-            // แก้ไข Trailing comma จากรูปแบบ Python
             const cleanedText = text.replace(/,\s*}/g, '}');
             const data = JSON.parse(cleanedText);
             
             const expandedData = [];
-            
             Object.entries(data).forEach(([key, value]) => {
                 if (type === 'thai' && key.includes(',')) {
                     key.split(',').forEach(k => {
@@ -38,6 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // เรียงลำดับตัวอักษร A-Z / ก-ฮ
             expandedData.sort((a, b) => {
                 return type === 'thai' ? a[0].localeCompare(b[0], 'th') : a[0].localeCompare(b[0], 'en');
             });
@@ -68,61 +85,69 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         authorInput.disabled = false;
-        updatePlaceholder();
+        updateUI();
         
         if (authorInput.value) {
             handleSearch();
         }
 
-        // Initialize Copy Button GSAP Animation
         initButtonEffect();
-        
-        // Initialize Visitor Counter
         initVisitorCounter();
     }
 
-    function updatePlaceholder() {
-        const type = cutterTypeSelect.value;
+    function updateUI() {
+        const type = getSelectedCutterType();
+        
         if (type === 'thai') {
             authorInput.placeholder = "เช่น นิภา, มงคล, สุชาติ...";
+            lcDigitsContainer.style.display = 'none'; 
         } else if (type === 'sanborn') {
             authorInput.placeholder = "เช่น Abbott, Smith, Taylor...";
+            lcDigitsContainer.style.display = 'none'; 
         } else if (type === 'english') {
             authorInput.placeholder = "เช่น Adams, Queen, The United States...";
+            lcDigitsContainer.style.display = 'block'; 
         }
         
         authorInput.value = '';
-        resultDisplay.textContent = initialMessage;
-        resultDisplay.style.color = '#fff';
-        copyWrapper.style.display = 'none'; // ซ่อนปุ่มก็อปปี้
+        handleSearch(); // รีเซ็ตผลลัพธ์ให้กลับไปสถานะเริ่มต้น
     }
 
+    // ลอจิกการหาในฐานข้อมูล พร้อมคืนค่า ก่อนหน้า และ ถัดไป
     function findInList(query, sortedList, locale) {
-        if (!query) return { result: initialMessage, color: '#fff' };
+        if (!query) return { result: initialMessage, color: '#fff', isList: false, matchedName: '' };
         
         const normalizedQuery = query.trim();
         
+        // วนลูปจากหลังมาหน้า (ฮ->ก) เพื่อหาจุดที่เหมาะสมที่สุด (มากที่สุดที่ยังน้อยกว่าหรือเท่ากับ Query)
         for (let i = sortedList.length - 1; i >= 0; i--) {
             const [primaryName, cutterNumber] = sortedList[i];
-            
             const q = locale === 'en' ? normalizedQuery.toLowerCase() : normalizedQuery;
             const p = locale === 'en' ? primaryName.toLowerCase() : primaryName;
 
             if (q.localeCompare(p, locale) >= 0) {
-                return { result: cutterNumber, color: 'var(--secondary-color, #4dabf7)' };
+                const cleanedCutter = cutterNumber.replace(/\s+/g, '');
+                return { 
+                    result: cleanedCutter, 
+                    color: 'var(--secondary-color, #4dabf7)',
+                    isList: true,
+                    matchedName: primaryName,
+                    prev: (i - 1) >= 0 ? sortedList[i - 1] : null,
+                    next: (i + 1) < sortedList.length ? sortedList[i + 1] : null
+                };
             }
         }
-        return { result: notFoundMessage, color: '#e74c3c' };
+        return { result: notFoundMessage, color: '#e74c3c', isList: false, matchedName: '' };
     }
 
-    // ลอจิก LC Cutter แบบไม่นับ A, An, The และให้ผลลัพธ์เป็น ตัวอักษร 1 ตัว + เลข 3 ตัว (รวมเป็น 4 หลัก)
+    // ลอจิก LC Cutter (ไม่มีก่อนหน้า/ถัดไป)
     function calculateLCCutter(name) {
-        if (!name) return { result: initialMessage, color: '#fff' };
+        if (!name) return { result: initialMessage, color: '#fff', isList: false, matchedName: '' };
         
-        // ลบคำนำหน้า A, An, The (แบบ case-insensitive) แล้วทำเป็นตัวพิมพ์ใหญ่
-        name = name.replace(/^(A|AN|THE)\s+/i, '').trim().toUpperCase();
+        const displayName = name.replace(/^(A|AN|THE)\s+/i, '').trim();
+        name = displayName.toUpperCase();
         
-        if (name.length === 0) return { result: initialMessage, color: '#fff' };
+        if (name.length === 0) return { result: initialMessage, color: '#fff', isList: false, matchedName: '' };
 
         let cutter = name.charAt(0);
         let remaining = name.substring(1).toLowerCase();
@@ -132,29 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (c < 'p') return '5'; if (c < 'r') return '6'; if (c < 's') return '7';
             if (c < 'u') return '8'; return '9';
         };
-
         const getSNum = (c) => {
             if (c < 'c') return '2'; if (c < 'e') return '3'; if (c < 'h') return '4';
             if (c < 'm') return '5'; if (c < 't') return '6'; if (c < 'u') return '7';
             if (c < 'w') return '8'; return '9';
         };
-
         const getQuNum = (c) => {
             if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'o') return '5';
-            if (c < 'r') return '6'; if (c < 't') return '7'; if (c < 'y') return '8';
-            return '9';
+            if (c < 'r') return '6'; if (c < 't') return '7'; if (c < 'y') return '8'; return '9';
         };
-
         const getConsonantNum = (c) => {
             if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'o') return '5';
-            if (c < 'r') return '6'; if (c < 'u') return '7'; if (c < 'y') return '8';
-            return '9';
+            if (c < 'r') return '6'; if (c < 'u') return '7'; if (c < 'y') return '8'; return '9';
         };
-
         const getExpansionNum = (c) => {
             if (c < 'e') return '3'; if (c < 'i') return '4'; if (c < 'm') return '5';
-            if (c < 'p') return '6'; if (c < 't') return '7'; if (c < 'w') return '8';
-            return '9';
+            if (c < 'p') return '6'; if (c < 't') return '7'; if (c < 'w') return '8'; return '9';
         };
 
         if (['A','E','I','O','U'].includes(cutter)) {
@@ -184,27 +202,74 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // กำจัดความยาวให้อยู่ที่สูงสุด 4 ตัว (1 ตัวอักษร + 3 ตัวเลข)
-        cutter = cutter.substring(0, 4);
+        const digitsSelected = getSelectedLCDigits();
+        const maxLength = digitsSelected + 1; 
+        cutter = cutter.substring(0, maxLength);
 
-        return { result: cutter, color: 'var(--secondary-color, #4dabf7)' };
+        return { result: cutter, color: 'var(--secondary-color, #4dabf7)', isList: false, matchedName: displayName };
     }
 
     function handleSearch() {
         const query = authorInput.value;
-        const type = cutterTypeSelect.value;
+        const type = getSelectedCutterType();
         let searchResult;
         
         if (type === 'thai') {
-            if (!isThaiLoaded) searchResult = { result: errorMessage, color: '#e74c3c' };
+            if (!isThaiLoaded) searchResult = { result: errorMessage, color: '#e74c3c', isList: false, matchedName: '' };
             else searchResult = findInList(query, thaiSortedList, 'th');
         } else if (type === 'sanborn') {
-            if (!isSanbornLoaded) searchResult = { result: errorMessage, color: '#e74c3c' };
+            if (!isSanbornLoaded) searchResult = { result: errorMessage, color: '#e74c3c', isList: false, matchedName: '' };
             else searchResult = findInList(query, sanbornSortedList, 'en');
         } else if (type === 'english') {
             searchResult = calculateLCCutter(query);
         }
         
+        // จัดการแสดงผล UI แบบตารางดัชนี
+        if (searchResult.result === initialMessage || searchResult.result === notFoundMessage || searchResult.result === errorMessage) {
+            contextWrapper.classList.add('single-mode');
+            prevRow.style.display = 'none';
+            nextRow.style.display = 'none';
+            mainName.textContent = '';
+            mainLabel.textContent = '';
+            resultDisplay.classList.add('center-text');
+        } else {
+            resultDisplay.classList.remove('center-text');
+            if (searchResult.isList) {
+                // สำหรับแบบมีฐานข้อมูล (แสดง 3 บรรทัด)
+                contextWrapper.classList.remove('single-mode');
+                prevRow.style.display = 'flex';
+                nextRow.style.display = 'flex';
+                mainLabel.textContent = '▶ ปัจจุบัน';
+                mainName.textContent = searchResult.matchedName;
+                
+                // ข้อมูลก่อนหน้า
+                if (searchResult.prev) {
+                    document.getElementById('prevName').textContent = searchResult.prev[0];
+                    document.getElementById('prevCutter').textContent = searchResult.prev[1].replace(/\s+/g, '');
+                } else {
+                    document.getElementById('prevName').textContent = '-';
+                    document.getElementById('prevCutter').textContent = '-';
+                }
+                
+                // ข้อมูลถัดไป
+                if (searchResult.next) {
+                    document.getElementById('nextName').textContent = searchResult.next[0];
+                    document.getElementById('nextCutter').textContent = searchResult.next[1].replace(/\s+/g, '');
+                } else {
+                    document.getElementById('nextName').textContent = '-';
+                    document.getElementById('nextCutter').textContent = '-';
+                }
+            } else {
+                // สำหรับ LC Cutter (แสดงแค่ผลลัพธ์ ไม่แสดงหน้า/หลัง)
+                contextWrapper.classList.add('single-mode');
+                prevRow.style.display = 'none';
+                nextRow.style.display = 'none';
+                mainLabel.textContent = '▶ ชื่อผู้แต่ง';
+                mainName.textContent = searchResult.matchedName;
+            }
+        }
+        
+        // ใส่ข้อมูลลงในตัวเลขผลลัพธ์
         resultDisplay.textContent = searchResult.result;
         resultDisplay.style.color = searchResult.color;
 
@@ -216,10 +281,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    cutterTypeSelect.addEventListener('change', updatePlaceholder);
+    cutterTypeRadios.forEach(radio => radio.addEventListener('change', updateUI));
+    lcDigitsRadios.forEach(radio => radio.addEventListener('change', handleSearch));
     authorInput.addEventListener('input', handleSearch);
 
-    // ระบบอนิเมชั่นและปุ่มคัดลอกด้วย GSAP
     function initButtonEffect() {
         $('.button--bubble').each(function() {
             var $circlesTopLeft = $(this).parent().find('.circle.top-left');
@@ -267,7 +332,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // ฟังก์ชันคัดลอก (Copy to Clipboard)
         $('#copyButton').on('click', function(e) {
             e.preventDefault();
             const textToCopy = $('#result').text();
@@ -285,13 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-  // ฟังก์ชันนับจำนวนคนเข้าเว็บแบบ Real-time (ใช้งานผ่าน Free API: counterapi.dev)
     function initVisitorCounter() {
-        const namespace = 'cutternumber_app_library'; // ชื่อโปรเจกต์
-        const key = 'visits'; // คีย์สำหรับการนับ
+        const namespace = 'cutternumber_app_library'; 
+        const key = 'visits'; 
         const viewCountElement = document.getElementById('viewCount');
         
-        // 1. ทำงานครั้งแรกเมื่อเข้าเว็บ: ส่งคำสั่ง /up เพื่อนับยอดเพิ่ม 1 คน
         fetch(`https://api.counterapi.dev/v1/${namespace}/${key}/up`)
             .then(response => response.json())
             .then(data => {
@@ -304,13 +366,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 viewCountElement.innerText = "-";
             });
 
-        // 2. ระบบ Real-time: เช็คยอดล่าสุดทุกๆ 5 วินาที (โดยใช้แค่คีย์เฉยๆ ไม่ใส่ /up เพื่อไม่ให้ยอดบวกมั่ว)
         setInterval(() => {
             fetch(`https://api.counterapi.dev/v1/${namespace}/${key}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data && data.count) {
-                        // เช็คว่าถ้ายอดเปลี่ยน ให้รันแอนิเมชันเด้งเบาๆ
                         const currentDisplayed = viewCountElement.innerText.replace(/,/g, '');
                         if(currentDisplayed !== data.count.toString() && currentDisplayed !== "-") {
                             viewCountElement.style.transform = "scale(1.3)";
@@ -320,13 +380,11 @@ document.addEventListener('DOMContentLoaded', () => {
                                 viewCountElement.style.color = "#90feb5";
                             }, 300);
                         }
-                        
-                        // อัปเดตตัวเลขล่าสุด
                         viewCountElement.innerText = data.count.toLocaleString();
                     }
                 })
                 .catch(error => console.error('Realtime update failed:', error));
-        }, 5000); // 5000 มิลลิวินาที = 5 วินาที (ปรับให้เร็วขึ้นหรือช้าลงได้ตรงนี้)
+        }, 5000);
     }
 
     init();
